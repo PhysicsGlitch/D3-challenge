@@ -39,17 +39,31 @@ var trace1 = {
 var scatter_data = [trace1];
 
 var scatter_layout = { xaxis: {
+     title: {
+      text: 'Poverty (%)',
+      font: {
+        family: 'Arial, monospace',
+        size: 18
+      }
+    },
     range: [8, 22],
     autotick: false,
     showgrid: false,
     zeroline: false,
     showline: true,
-    tickmode: 'linear',
+    //tickmode: 'array',
     tick0: 10,
     dtick: 2,
     showticklabels: true
   },
   yaxis: {
+      title: {
+      text: 'Lacks Healthcare (%)',
+      font: {
+        family: 'Arial, monospace',
+        size: 18
+      }
+    },
     range: [20, 38],
     autotick: false,
     tickmode: 'linear',
@@ -59,8 +73,14 @@ var scatter_layout = { xaxis: {
     zeroline: true,
     showline: true,
     showticklabels: true
-  },                      
-  title: 'Obesity vs Poverty',
+  }, 
+  title: {
+    text:'Percent Obesity vs Poverty by State',
+    font: {
+      family: 'Arial, monospace',
+      size: 24
+    },
+  },
   showlegend: false,
   height: 800,
   width: 1400
