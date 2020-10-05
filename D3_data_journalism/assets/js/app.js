@@ -1,93 +1,67 @@
-// First step is to import the csv into D3 and retrieve the arrays I need
 
-var state_obesity = [];
-var state_poverty = [];
-var state_abbr = [];
 
+var margin = {top: 60, right: 60, bottom: 30, left: 60},
+    width = 900 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#scatter")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+//Read the data
 d3.csv("assets/data/data.csv").then(function(data) {
   data.forEach(function(data) {
     data.obesity = +data.obesity;
     data.poverty = +data.poverty;
-    state_obesity.push(+data.obesity);
-    state_poverty.push(+data.poverty);
-    state_abbr.push(data.abbr);
+    data.income = +data.income;
+    data.smokes = +data.smokes;
+    data.healthcare = +data.healthcare;
+    return data;
   });
-  console.log(data[0]);
-  console.log(state_obesity);
-  console.log(state_poverty);
 
-// having mapped the dictionary values I need for the plat now I need to push these to a list so they can be plotted in Plotly
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([8, 25])
+    .range([ 0, width ]);
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+  // Add Y axis
+  var y = d3.scaleLinear()
+    .domain([20, 36])
+    .range([ height, 0]);
+  svg.append("g")
+    .call(d3.axisLeft(y));
+
+  // Add dots
+ svg.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return x(d.poverty); } )
+      .attr("cy", function (d) { return y(d.obesity); } )
+      .attr("r", 10)
+      .style("fill", "#69b3a2")
+  
+ svg.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter().append("text").text(function(d){
+                    return d.abbr;
+                })
+                .attr("x", function (d) {
+                    return x(d.poverty);
+                })
+                .attr("y", function (d) {
+                    return y(d.obesity);
+                });
+               
+});;
     
-
-    
-var trace1 = {
-  x: state_poverty,
-  y: state_obesity,
-  mode: 'markers+text',
-  type: 'scatter',
-  name: 'Team A',
-  text: state_abbr,
-  marker: {
-    color: 'rgb(17, 157, 255)',
-    size: 35,
-    line: {
-      color: 'rgb(231, 99, 250)',
-      width: 6
-    }},
-};
-
-var scatter_data = [trace1];
-
-var scatter_layout = { xaxis: {
-     title: {
-      text: 'Poverty (%)',
-      font: {
-        family: 'Arial, monospace',
-        size: 18
-      }
-    },
-    range: [8, 22],
-    autotick: false,
-    showgrid: false,
-    zeroline: false,
-    showline: true,
-    //tickmode: 'array',
-    tick0: 10,
-    dtick: 2,
-    showticklabels: true
-  },
-  yaxis: {
-      title: {
-      text: 'Lacks Healthcare (%)',
-      font: {
-        family: 'Arial, monospace',
-        size: 18
-      }
-    },
-    range: [20, 38],
-    autotick: false,
-    tickmode: 'linear',
-    tick0: 22,
-    dtick: 2,
-    showgrid: false,
-    zeroline: true,
-    showline: true,
-    showticklabels: true
-  }, 
-  title: {
-    text:'Percent Obesity vs Poverty by State',
-    font: {
-      family: 'Arial, monospace',
-      size: 24
-    },
-  },
-  showlegend: false,
-  height: 800,
-  width: 1400
-};
-
-    
-// Finally, I create my plot and bind it to the proper html tag
-    
-Plotly.newPlot('scatter', scatter_data, scatter_layout);
-});
