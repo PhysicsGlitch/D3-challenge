@@ -70,27 +70,59 @@ scatter_dots.append("text")
     
 var ylabel1 = svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 30 - margin.left)
-      .attr("x", 0 - (height / 2))
+      .attr("y", 60 - margin.left)
+      .attr("x",0 - (height / 2))
       .attr("dy", "1em")
       .attr("font-family", "Arial")
       .attr("font-size", "20px")
-      .attr("font-weight", 550)
       .style("text-anchor", "middle")
-      .text("(%) Obesity");
+      .text("Label 1");
 
-
+var ylabel2 = svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 30 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .attr("font-family", "Arial")
+      .attr("font-size", "20px")
+      .style("text-anchor", "middle")
+      .text("Label 2");
+    
+var ylabel3 = svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .attr("font-family", "Arial")
+      .attr("font-size", "20px")
+      .style("text-anchor", "middle")
+      .text("Label 3");
     
 var xlabel1 = svg.append("text")
-      .attr("y", height + 60)
-      .attr("x", 30 + (width / 2 ))
+      .attr("x", 60 - margin.bottom)
+      .attr("y",0 - (width / 2))
       .attr("dx", "1em")
       .attr("font-family", "Arial")
       .attr("font-size", "20px")
-      .attr("font-weight", 550)
-      .style("text-anchor", "middle")
-      .text("(%) Poverty");
+      .style("text-anchor", "bottom")
+      .text("Label 1");
 
-
+var ylabel2 = svg.append("text")
+      .attr("x", 30 - margin.bottom)
+      .attr("y",0 - (width / 2))
+      .attr("dx", "1em")
+      .attr("font-family", "Arial")
+      .attr("font-size", "20px")
+      .style("text-anchor", "bottom")
+      .text("Label 2");
+    
+var ylabel3 = svg.append("text")
+      .attr("x", 0 - margin.bottom)
+      .attr("y",0 - (width / 2))
+      .attr("dx", "1em")
+      .attr("font-family", "Arial")
+      .attr("font-size", "20px")
+      .style("text-anchor", "bottom")
+      .text("Label 3");
 });;
     
