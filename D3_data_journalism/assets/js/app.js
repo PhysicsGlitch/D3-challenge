@@ -40,28 +40,29 @@ d3.csv("assets/data/data.csv").then(function(data) {
     .call(d3.axisLeft(y));
 
   // Add dots
- svg.append('g')
-    .selectAll("dot")
-    .data(data)
-    .enter()
-    .append("circle")
-      .attr("cx", function (d) { return x(d.poverty); } )
-      .attr("cy", function (d) { return y(d.obesity); } )
-      .attr("r", 10)
-      .style("fill", "#69b3a2")
-  
- svg.append('g')
-    .selectAll("dot")
-    .data(data)
-    .enter().append("text").text(function(d){
-                    return d.abbr;
-                })
-                .attr("x", function (d) {
-                    return x(d.poverty);
-                })
-                .attr("y", function (d) {
-                    return y(d.obesity);
-                });
+ var scatter_dots = svg.selectAll("g")
+                .data(data)
+                .enter()
+                .append("g");
+
+// Add circles to dots
+scatter_dots.append("circle")
+  .attr("class", "dot")
+  .attr("cx", function(d) { return x(d.poverty); })
+  .attr("cy", function(d) { return y(d.obesity); })
+  .attr("r", 12)
+  .style("fill", "#69b3a2");
+
+// Append text to dots
+scatter_dots.append("text")
+    .text(function(d) {
+    return d.abbr; })
+  .attr("x", function(d) { return x(d.poverty); })
+  .attr("y", function(d) { return y(d.obesity); })
+  .attr("font-family", "Arial")
+  .attr("font-size", "9px")
+  .attr("text-anchor", "middle")
+  .attr("fill", "white");
                
 });;
     
