@@ -240,24 +240,16 @@ if (chosenAxisNum==='1')    {
 
 // Add circles to dots
 d3.selectAll(".dot").exit().remove();
-    
+d3.selectAll(".dot").selectAll("text").remove();
 
 svg_bonus.selectAll(".dot")
-            .data(data)
-            .enter()
-            .append("circle")
             .transition()
             .duration(900)
-            .attr("r", 10)
             .attr("cx", function(d) { return newXScale(d.poverty); })
-            .attr("cy", function(d) { return newYScale(d.obesity); })
-            .attr("r", 12)
-            .style("fill", "#69b3a2");
+            .attr("cy", function(d) { return newYScale(d.obesity); });
+            
 
 svg_bonus.selectAll(".dot")
-    .data(data)
-    .enter()
-    .append("text")
     .text(function(d) {
      return d.abbr; })
     .attr("x", function(d) { return newXScale(d.poverty); })
@@ -276,29 +268,21 @@ else if (chosenAxisNum==='2')  {
     .domain([35000, 75000])
     .range([ 0, width ]);
     var newYScale = d3.scaleLinear()
-    .domain([4, 30])
+    .domain([2, 28])
     .range([ height, 0]);
     renderXAxis(newXScale);
     renderYAxis(newYScale);
     
+    d3.selectAll(".dot")
     d3.selectAll(".dot").exit().remove();
     
     svg_bonus.selectAll(".dot")
-            .data(data)
-            .enter()
-            .append("circle")
             .transition()
             .duration(900)
-            .attr("r", 10)
             .attr("cx", function(d) { return newXScale(d.income); })
-            .attr("cy", function(d) { return newYScale(d.healthcare); })
-            .attr("r", 12)
-            .style("fill", "#69b3a2");
+            .attr("cy", function(d) { return newYScale(d.healthcare); });
     
-     svg_bonus.selectAll(".dot")
-    .data(data)
-    .enter()
-    .append("text")
+   svg_bonus.selectAll(".dot")
     .text(function(d) {
      return d.abbr; })
     .attr("x", function(d) { return newXScale(d.income); })
@@ -306,37 +290,28 @@ else if (chosenAxisNum==='2')  {
     .attr("font-family", "Arial")
     .attr("font-size", "9px")
     .attr("text-anchor", "middle")
-    .attr("fill", "white"); 
+    .attr("fill", "white");
     
  }
           
 else if (chosenAxisNum==='3') {
     var newXScale = d3.scaleLinear()
-    .domain([0, 40])
+    .domain([8, 28])
     .range([ 0, width ]);
     var newYScale = d3.scaleLinear()
-    .domain([0, 50])
+    .domain([0, 30])
     .range([ height, 0]);
     renderXAxis(newXScale);
     renderYAxis(newYScale);
     
  d3.selectAll(".dot").exit().remove();
     
- svg_bonus.selectAll(".dot")
-            .data(data)
-            .enter().append("circle")
-                .transition()
+ svg_bonus.selectAll(".dot").transition()
                 .duration(900)
-                .attr("r", 10)
                 .attr("cx", function(d) { return newXScale(d.smokes); })
-                .attr("cy", function(d) { return newYScale(d.healthcare); })
-                .attr("r", 12)
-                .style("fill", "#69b3a2");
+                .attr("cy", function(d) { return newYScale(d.healthcare); });
     
     svg_bonus.selectAll(".dot")
-    .data(data)
-    .enter()
-    .append("text")
     .text(function(d) {
      return d.abbr; })
     .attr("x", function(d) { return newXScale(d.smokes); })
