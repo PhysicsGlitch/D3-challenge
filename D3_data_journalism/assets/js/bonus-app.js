@@ -30,7 +30,7 @@ var ylabel1 = labelGroup.append("text")
       .attr("font-weight", "bold")
       .attr("value", 1)
       .style("text-anchor", "middle")
-      .text("yLabel1");
+      .text("Obesity (%)");
 
 var ylabel2 = labelGroup.append("text")
       .attr("class", "y2")
@@ -43,7 +43,7 @@ var ylabel2 = labelGroup.append("text")
       .attr("font-weight", "lighter")
       .attr("value", 2)
       .style("text-anchor", "middle")
-      .text("yLabel2");
+      .text("Healthcare (%)");
     
 var ylabel3 = labelGroup.append("text")
       .attr("class", "y3")
@@ -56,7 +56,7 @@ var ylabel3 = labelGroup.append("text")
       .attr("font-weight", "lighter")
       .attr("value", 3)
       .style("text-anchor", "middle")
-      .text("yLabel3");
+      .text("Healthcare (%)");
     
 var xlabel1 = labelGroup.append("text")
       .attr("class", "x1")
@@ -68,7 +68,7 @@ var xlabel1 = labelGroup.append("text")
       .attr("font-weight", "bold")
       .attr("value", 1)
       .style("text-anchor", "middle")
-      .text("xLabel1");
+      .text("Poverty (%)");
 
 var xlabel2 = labelGroup.append("text")
       .attr("class", "x2")
@@ -80,7 +80,7 @@ var xlabel2 = labelGroup.append("text")
       .attr("font-weight", "lighter")
       .attr("value", 2)
       .style("text-anchor", "middle")
-      .text("xLabel2");
+      .text("Income(Dollars)");
 
 var xlabel3 = labelGroup.append("text")
       .attr("class", "x3")
@@ -92,7 +92,7 @@ var xlabel3 = labelGroup.append("text")
       .attr("font-weight", "lighter")
       .attr("value", 3)
       .style("text-anchor", "middle")
-      .text("xLabel3");
+      .text("Smokes(%)");
    
 // Append click events to each label by selecting the svg element, text and then binding it with d3.select(this)
 
@@ -101,9 +101,6 @@ d3.csv("assets/data/data.csv").then(function(data) {
   data.forEach(function(data) {
     data.obesity = +data.obesity;
     data.poverty = +data.poverty;
-    data.income = +data.income;
-    data.smokes = +data.smokes;
-    data.healthcare = +data.healthcare;
     return data;
   });
 
@@ -125,7 +122,7 @@ d3.csv("assets/data/data.csv").then(function(data) {
     .call(d3.axisLeft(LinearScaleY));
 
 // Add dots: I declared it as a variable, scatter dots to make it a bit easier to see how I appended both circles and then dots to the poits. 
- var bonus_dots = svg_bonus.selectAll("g")
+var bonus_dots = svg_bonus.selectAll("g")
                 .data(data)
                 .enter()
                 .append("g");
@@ -150,24 +147,24 @@ bonus_dots.append("text")
   .attr("fill", "white"); 
     });
 
-
-function xScale(xdata) {
-  // create scales
-  var LinearScaleX = d3.scaleLinear()
-    .domain([0, 100])
-    .range([ 0, width ]);
-    return LinearScaleX;
-}
- 
-
-function yScale(ydata) {
+function updateDots (data, xdata, newXScale, ydata, newYScale) {
+    
+    svg_bonus.selectAll(".dot").exit().remove();
+    
+    var new_dots = svg_bonus.selectAll("g")
+                    .data(data)
+                    .enter()
+                    .append("g");
+    
+    new_dots.append("circle")
+    .attr("class", "dot")
+    .attr("cx", function(d) { return newXScale(d.xdata); })
+    .attr("cy", function(d) { return newYScale(d.ydata); })
+    .attr("r", 12)
+    .style("fill", "#69b3a2");
   
-var LinearScaleY = d3.scaleLinear()
-    .domain([20, 36])
-    .range([ height, 0]);
-    return  LinearScaleY;
-}
-
+    };
+                                        
 
 // function used for updating xAxis var upon click on axis label
 function renderXAxis(newXScale) {
@@ -203,6 +200,16 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis) {
 
 var chosenAxisNum = 1
 
+d3.csv("assets/data/data.csv").then(function(data) {
+    data.forEach(function(data) {
+    data.obesity = +data.obesity;
+    data.poverty = +data.poverty;
+    data.income = +data.income;
+    data.smokes = +data.smokes;
+    data.healthcare = +data.healthcare;
+    return data;
+  });
+
 labelGroup.selectAll("text")
          .on('click', function () {
           var clicked_axis = d3.select(this).attr("value");
@@ -219,43 +226,126 @@ labelGroup.selectAll("text")
               
 if (chosenAxisNum==='1')    {  
     
-    console.log(chosenAxisNum)
     var newXScale = d3.scaleLinear()
-    .domain([0, 100])
+    .domain([8, 25])
     .range([0, width]);
+    
     var newYScale = d3.scaleLinear()
     .domain([20, 36])
     .range([height, 0]);
+    
     renderXAxis(newXScale);
     renderYAxis(newYScale);
-}
+   
+
+// Add circles to dots
+d3.selectAll(".dot").exit().remove();
+    
+
+svg_bonus.selectAll(".dot")
+            .data(data)
+            .enter()
+            .append("circle")
+            .transition()
+            .duration(900)
+            .attr("r", 10)
+            .attr("cx", function(d) { return newXScale(d.poverty); })
+            .attr("cy", function(d) { return newYScale(d.obesity); })
+            .attr("r", 12)
+            .style("fill", "#69b3a2");
+
+svg_bonus.selectAll(".dot")
+    .data(data)
+    .enter()
+    .append("text")
+    .text(function(d) {
+     return d.abbr; })
+    .attr("x", function(d) { return newXScale(d.poverty); })
+    .attr("y", function(d) { return newYScale(d.obesity); })
+    .attr("font-family", "Arial")
+    .attr("font-size", "9px")
+    .attr("text-anchor", "middle")
+    .attr("fill", "white");
+ 
+    }
+
 
 else if (chosenAxisNum==='2')  {  
-    
-    console.log(clicked_axis)
+
     var newXScale = d3.scaleLinear()
-    .domain([0, 80])
+    .domain([35000, 75000])
     .range([ 0, width ]);
     var newYScale = d3.scaleLinear()
-    .domain([0, 100])
+    .domain([4, 30])
     .range([ height, 0]);
     renderXAxis(newXScale);
     renderYAxis(newYScale);
+    
+    d3.selectAll(".dot").exit().remove();
+    
+    svg_bonus.selectAll(".dot")
+            .data(data)
+            .enter()
+            .append("circle")
+            .transition()
+            .duration(900)
+            .attr("r", 10)
+            .attr("cx", function(d) { return newXScale(d.income); })
+            .attr("cy", function(d) { return newYScale(d.healthcare); })
+            .attr("r", 12)
+            .style("fill", "#69b3a2");
+    
+     svg_bonus.selectAll(".dot")
+    .data(data)
+    .enter()
+    .append("text")
+    .text(function(d) {
+     return d.abbr; })
+    .attr("x", function(d) { return newXScale(d.income); })
+    .attr("y", function(d) { return newYScale(d.healthcare); })
+    .attr("font-family", "Arial")
+    .attr("font-size", "9px")
+    .attr("text-anchor", "middle")
+    .attr("fill", "white"); 
     
  }
           
 else if (chosenAxisNum==='3') {
-    
-    console.log(clicked_axis)
     var newXScale = d3.scaleLinear()
-    .domain([0, 60])
+    .domain([0, 40])
     .range([ 0, width ]);
     var newYScale = d3.scaleLinear()
-    .domain([0, 150])
+    .domain([0, 50])
     .range([ height, 0]);
     renderXAxis(newXScale);
     renderYAxis(newYScale);
+    
+ d3.selectAll(".dot").exit().remove();
+    
+ svg_bonus.selectAll(".dot")
+            .data(data)
+            .enter().append("circle")
+                .transition()
+                .duration(900)
+                .attr("r", 10)
+                .attr("cx", function(d) { return newXScale(d.smokes); })
+                .attr("cy", function(d) { return newYScale(d.healthcare); })
+                .attr("r", 12)
+                .style("fill", "#69b3a2");
+    
+    svg_bonus.selectAll(".dot")
+    .data(data)
+    .enter()
+    .append("text")
+    .text(function(d) {
+     return d.abbr; })
+    .attr("x", function(d) { return newXScale(d.smokes); })
+    .attr("y", function(d) { return newYScale(d.healthcare); })
+    .attr("font-family", "Arial")
+    .attr("font-size", "9px")
+    .attr("text-anchor", "middle")
+    .attr("fill", "white"); 
 };        
-  };
-          
-});  
+  };       
+});
+});
