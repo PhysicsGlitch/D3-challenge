@@ -11,7 +11,11 @@ var svg_bonus = d3.select("#bonus")
     .append("g")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
-    
+
+// Add tootips
+
+
+
 // Add Axis Labels
 
 var labelGroup = svg_bonus.append("g");
@@ -121,8 +125,18 @@ d3.csv("assets/data/data.csv").then(function(data) {
     .attr("class", "y-axis")
     .call(d3.axisLeft(LinearScaleY));
 
+var tip = d3.tip().attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function(d) {
+        return "<strong>State:</strong> <span style='color:red'>" + d.state + "</span>" + "</br>" +
+            "<strong>Poverty:</strong> <span style='color:red'>" + d.poverty + "</span>" + 
+        "</br>" + "<strong>Obesity:</strong> <span style='color:red'>" + d.obesity + "</span>";
+        });
+            
+svg_bonus.call(tip);
+
 // Add dots: I declared it as a variable, scatter dots to make it a bit easier to see how I appended both circles and then dots to the poits. 
-var bonus_dots = svg_bonus.selectAll("g")
+var bonus_dots = svg_bonus.selectAll("circle")
                 .data(data)
                 .enter()
                 .append("g");
@@ -133,10 +147,17 @@ bonus_dots.append("circle")
   .attr("cx", function(d) { return LinearScaleX(d.poverty); })
   .attr("cy", function(d) { return LinearScaleY(d.obesity); })
   .attr("r", 12)
-  .style("fill", "#69b3a2");
+  .style("fill", "#69b3a2")
+    .on('mouseover', tip.show)
+    .on('mouseout', tip.hide)
+    
+
+
+
 
 // Append text to dots
 bonus_dots.append("text")
+    .attr("class", "dottext")
     .text(function(d) {
     return d.abbr; })
   .attr("x", function(d) { return LinearScaleX(d.poverty); })
@@ -145,27 +166,22 @@ bonus_dots.append("text")
   .attr("font-size", "9px")
   .attr("text-anchor", "middle")
   .attr("fill", "white"); 
-    });
+    
 
-function updateDots (data, xdata, newXScale, ydata, newYScale) {
-    
-    svg_bonus.selectAll(".dot").exit().remove();
-    
-    var new_dots = svg_bonus.selectAll("g")
-                    .data(data)
-                    .enter()
-                    .append("g");
-    
-    new_dots.append("circle")
-    .attr("class", "dot")
-    .attr("cx", function(d) { return newXScale(d.xdata); })
-    .attr("cy", function(d) { return newYScale(d.ydata); })
-    .attr("r", 12)
-    .style("fill", "#69b3a2");
+
+        
+        
+
+/* Invoke the tip in the context of your visualization */
   
-    };
-                                        
 
+            
+
+        
+    
+
+});
+    
 // function used for updating xAxis var upon click on axis label
 function renderXAxis(newXScale) {
   var bottomAxis = d3.axisBottom(newXScale);
@@ -197,6 +213,11 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis) {
 
   return circlesGroup;
 }
+
+// The following code updates based on axis click. To accomplish this I called the data and defined the three axis by numbers 1-3 and called a variable chosenAxisNum.
+// The code runs the changes through through if conditionals based on the chosen number. I found that d3 works well by selecting based on css selectors.
+// So the code above creates the appropriate html divs and css classes. I can then use d3.selectAll using css selection to change the elements I need based on 
+// the chosenAxisNum. I manually set the linear scales to get the exact 
 
 var chosenAxisNum = 1
 
@@ -239,8 +260,7 @@ if (chosenAxisNum==='1')    {
    
 
 // Add circles to dots
-d3.selectAll(".dot").exit().remove();
-d3.selectAll(".dot").selectAll("text").remove();
+
 
 svg_bonus.selectAll(".dot")
             .transition()
@@ -249,15 +269,11 @@ svg_bonus.selectAll(".dot")
             .attr("cy", function(d) { return newYScale(d.obesity); });
             
 
-svg_bonus.selectAll(".dot")
-    .text(function(d) {
-     return d.abbr; })
+svg_bonus.selectAll(".dottext")
+    .transition()
+    .duration(900)
     .attr("x", function(d) { return newXScale(d.poverty); })
-    .attr("y", function(d) { return newYScale(d.obesity); })
-    .attr("font-family", "Arial")
-    .attr("font-size", "9px")
-    .attr("text-anchor", "middle")
-    .attr("fill", "white");
+    .attr("y", function(d) { return newYScale(d.obesity); });
  
     }
 
@@ -273,8 +289,6 @@ else if (chosenAxisNum==='2')  {
     renderXAxis(newXScale);
     renderYAxis(newYScale);
     
-    d3.selectAll(".dot")
-    d3.selectAll(".dot").exit().remove();
     
     svg_bonus.selectAll(".dot")
             .transition()
@@ -282,15 +296,12 @@ else if (chosenAxisNum==='2')  {
             .attr("cx", function(d) { return newXScale(d.income); })
             .attr("cy", function(d) { return newYScale(d.healthcare); });
     
-   svg_bonus.selectAll(".dot")
-    .text(function(d) {
-     return d.abbr; })
-    .attr("x", function(d) { return newXScale(d.income); })
-    .attr("y", function(d) { return newYScale(d.healthcare); })
-    .attr("font-family", "Arial")
-    .attr("font-size", "9px")
-    .attr("text-anchor", "middle")
-    .attr("fill", "white");
+   svg_bonus.selectAll(".dottext")
+       .transition()
+       .duration(900)
+       .attr("x", function(d) { return newXScale(d.income); })
+       .attr("y", function(d) { return newYScale(d.healthcare); });
+    
     
  }
           
@@ -304,14 +315,19 @@ else if (chosenAxisNum==='3') {
     renderXAxis(newXScale);
     renderYAxis(newYScale);
     
- d3.selectAll(".dot").exit().remove();
     
- svg_bonus.selectAll(".dot").transition()
-                .duration(900)
+     svg_bonus.selectAll(".dot").transition().duration(900)
                 .attr("cx", function(d) { return newXScale(d.smokes); })
                 .attr("cy", function(d) { return newYScale(d.healthcare); });
     
+     svg_bonus.selectAll(".dottext")
+         .transition()
+         .duration(900)
+         .attr("x", function(d) { return newXScale(d.smokes); })
+         .attr("y", function(d) { return newYScale(d.healthcare); });
+    
     svg_bonus.selectAll(".dot")
+    .append("text")
     .text(function(d) {
      return d.abbr; })
     .attr("x", function(d) { return newXScale(d.smokes); })
